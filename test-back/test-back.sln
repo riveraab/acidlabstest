@@ -5,11 +5,13 @@ VisualStudioVersion = 16.0.31313.79
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Acidlabs.WebUI", "Acidlabs.WebUI\Acidlabs.WebUI.csproj", "{67615E51-91C0-4BCB-9465-FE7588F7C7C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acidlabs.Core", "Acidlabd.Domain\Acidlabs.Core.csproj", "{DF28BDEC-3A3A-43D0-977C-2737CC14A650}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Acidlabs.Core", "Acidlabd.Domain\Acidlabs.Core.csproj", "{DF28BDEC-3A3A-43D0-977C-2737CC14A650}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acidlabs.Infrastructure", "Acidlabs.DataAccess\Acidlabs.Infrastructure.csproj", "{65BD89B1-1478-4B5F-85E6-87058660A674}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Acidlabs.Infrastructure", "Acidlabs.DataAccess\Acidlabs.Infrastructure.csproj", "{65BD89B1-1478-4B5F-85E6-87058660A674}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acidlabs.Application", "Acidlabs.Services\Acidlabs.Application.csproj", "{8784ABCD-141A-40DD-BBAC-1FC9D769E13F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Acidlabs.Application", "Acidlabs.Services\Acidlabs.Application.csproj", "{8784ABCD-141A-40DD-BBAC-1FC9D769E13F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Acidlabs.API", "Acidlabs.API\Acidlabs.API.csproj", "{0ACC223C-F764-479D-A9F3-38A18CC3CE98}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{8784ABCD-141A-40DD-BBAC-1FC9D769E13F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8784ABCD-141A-40DD-BBAC-1FC9D769E13F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8784ABCD-141A-40DD-BBAC-1FC9D769E13F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0ACC223C-F764-479D-A9F3-38A18CC3CE98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0ACC223C-F764-479D-A9F3-38A18CC3CE98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0ACC223C-F764-479D-A9F3-38A18CC3CE98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0ACC223C-F764-479D-A9F3-38A18CC3CE98}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

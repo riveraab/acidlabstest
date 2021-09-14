@@ -58,12 +58,33 @@ If already installed check if new version is available.
 
 Execute unit tests
 ```
-    cd "test-back/test/test-back.Tests"
+    cd "Acidlabs.API/test/Acidlabs.API.Tests"
     dotnet test
 ```
 
 Deploy application
 ```
-    cd "test-back/src/test-back"
+    cd "Acidlabs.API/src/Acidlabs.API"
     dotnet lambda deploy-serverless
 ```
+
+AppSettings
+
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information"
+    }
+  },
+  "DynamoDB": {
+    "Access": "",
+    "Secret": ""
+  },
+  "Authentication": {
+    "Token": ""
+  },
+  "Google": {
+    "ClientId": "",
+    "ClientSecret": ""
+  }
+}

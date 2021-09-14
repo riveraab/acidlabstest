@@ -8,7 +8,7 @@ using Acidlabs.Core.DTO;
 using Acidlabs.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace test_back.Controllers
+namespace Acidlabs.API.Controllers
 {
     [Route("api/[controller]")]
     public class AuthController : ControllerBase

@@ -37,7 +37,7 @@ namespace Acidlabs.Application
         {
             var resp = new TokenDTO();
             GoogleJsonWebSignature.ValidationSettings settings = new GoogleJsonWebSignature.ValidationSettings();
-            // Change this to your google client ID
+            // TODO: parametrizar
             settings.Audience = new List<string>() { "481634338205-vs2eve94at5qtmk0089ukhkb0msh5bq1.apps.googleusercontent.com" };
 
             GoogleJsonWebSignature.Payload payload = GoogleJsonWebSignature.ValidateAsync(credentials.token, settings).Result;
@@ -66,7 +66,7 @@ namespace Acidlabs.Application
             };
 
             //TODO: Cambiar a parametro
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("TestAcidLabs - 1237jfafa890kasñsdl90"));
+            var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("TestAcidLabs - 1237jfafa890kasñsdl90"));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
             var tokenDescriptor = new SecurityTokenDescriptor
             {

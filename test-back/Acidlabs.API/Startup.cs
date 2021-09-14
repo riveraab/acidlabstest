@@ -23,7 +23,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
-namespace test_back
+namespace Acidlabs.API
 {
     public class Startup
     {
@@ -37,8 +37,20 @@ namespace test_back
         // This method gets called by the runtime. Use this method to add services to the container
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
-                    
+            services.AddControllers().AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
+            // Cors
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                builder => builder
+                    .AllowAnyMethod()
+                    .AllowCredentials()
+                    .SetIsOriginAllowed((host) => true)
+                    .AllowAnyHeader());
+            });
+
 
             // DynamoDB
             IConfigurationSection dynamoDBSection =
@@ -51,19 +63,6 @@ namespace test_back
             var client = new AmazonDynamoDBClient(credentials, config);
             services.AddSingleton<IAmazonDynamoDB>(client);
             services.AddSingleton<IDynamoDBContext, DynamoDBContext>();
-
-            // OAuth
-            /*services.AddAuthentication("OAuth")
-                .AddJwtBearer("OAuth", config =>
-                {
-                    config.TokenValidationParameters = new TokenValidationParameters()
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetSection("Authentication:Token").Value)),
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                    };
-                })*/
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
@@ -74,38 +73,26 @@ namespace test_back
                     ValidateAudience = false,
                 };
             });
-               
+
             // Services
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUserService, UserService>();
             // Repositories
             services.AddScoped<IUserRepository, UserRepository>();
-
-            // CORS
-
-            services.AddCors(options =>
-            {
-                options.AddPolicy("CorsApi",
-                    builder => builder.WithOrigins("http://localhost:4200")
-                        .AllowAnyHeader()
-                        .AllowAnyMethod());
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseCors("CorsPolicy");
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
-
+            app.UseAuthentication();
             app.UseRouting();
-
             app.UseAuthorization();
-            app.UseCors("CorsApi");
 
             app.UseEndpoints(endpoints =>
             {

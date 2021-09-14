@@ -22,7 +22,7 @@ namespace Acidlabs.API.Controllers
         }
 
 
-        //[Authorize]
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -39,7 +39,7 @@ namespace Acidlabs.API.Controllers
             }
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(string id)
         {
@@ -77,7 +77,7 @@ namespace Acidlabs.API.Controllers
 
         }
 
-
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(string id, [FromBody] UserRegisterDTO user)
         {
@@ -93,7 +93,7 @@ namespace Acidlabs.API.Controllers
             }
         }
 
-
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
