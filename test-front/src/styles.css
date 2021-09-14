@@ -1,1 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
+.ng-touched.ng-invalid:not(form) {
+    border: red 1px solid;
+}
+
+
+input.ng-valid
+{
+    border-color: green 1px solid;
+}

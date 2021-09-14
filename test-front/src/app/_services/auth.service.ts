@@ -10,7 +10,7 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 })
 export class AuthService {
 
-  constructor(private _socialService: SocialAuthService, private _http: HttpClient) { 
+  constructor(private _socialService: SocialAuthService, private _http: HttpClient) {
   }
 
   signIn(cred: ILoginCredentials) {
@@ -21,7 +21,7 @@ export class AuthService {
     return this._http.post(`${environment.api_url}auth/login/google`, cred);
   }
 
-  processToken(token: string){
+  processToken(token: string) {
     sessionStorage.setItem('token', JSON.stringify(token));
     const helper = new JwtHelperService();
     const payload = helper.decodeToken(token);
@@ -35,9 +35,10 @@ export class AuthService {
     this._socialService.signOut();
   }
 
-  isLoggedIn(){
-    const token = JSON.parse(sessionStorage.getItem('token') || '');   
-    if (token){
+  isLoggedIn() {
+    const value = sessionStorage.getItem('token') || ''
+    const token = JSON.parse(value);
+    if (token) {
       const helper = new JwtHelperService();
       return !helper.isTokenExpired(token);
     } else {
@@ -45,7 +46,7 @@ export class AuthService {
     };
   }
 
-  getUserName(){
-    return sessionStorage.getItem('userName') || '';   
+  getUserName() {
+    return sessionStorage.getItem('userName') || '';
   }
 }

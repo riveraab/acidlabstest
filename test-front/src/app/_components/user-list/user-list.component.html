@@ -1,3 +1,15 @@
+<div class="row">
+    <div class="col-3">
+        <h3>
+            Usuarios
+        </h3>
+    </div>
+    <div class="offset-sm-8 col-1">
+        <a class="button" class="btn btn-outline-success" routerLink="/user">Agregar</a>
+    </div>
+</div>
+
+
 <table class="table">
     <thead>
         <tr>
@@ -16,9 +28,10 @@
             <td>{{ user.email }}</td>
             <td>
                 <div class="div-btn">
-                <a class="btn btn-sm btn-secondary" [routerLink]="['/user/', user.id]">Editar</a>
-                <button type="button" class="btn btn-sm btn-danger" (click)="deleteUser(user.id, user.name)">Eliminar</button>
-            </div>
+                    <a class="btn btn-sm btn-secondary" [routerLink]="['/user/', user.id]">Editar</a>
+                    <button type="button" class="btn btn-sm btn-danger"
+                        (click)="deleteUser(user.id, user.name)">Eliminar</button>
+                </div>
             </td>
         </tr>
     </tbody>

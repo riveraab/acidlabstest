@@ -2,7 +2,8 @@
     <div class="row justify-content-center">
         <div class="col-xs-12 col-md-6">
             <form [formGroup]="form">
-                <h2 class="text-center">Registro</h2>
+                <h2 class="text-center" *ngIf="idEditing == ''">Registro</h2>
+                <h2 class="text-center" *ngIf="idEditing != ''">Editar usuario {{userName}}</h2>
                 <div class="mb-3">
                     <label for="" class="form-label">Email</label>
                     <input type="text" class="form-control" placeholder="Email" required="required"
@@ -22,10 +23,13 @@
                     <label for="" class="form-label">Confirmar Password</label>
                     <input type="password" class="form-control" placeholder="Repetir Password" required="required"
                         formControlName="password2">
+                        <small class="text-danger" *ngIf="form.invalid && (form.dirty || form.controls['password'].touched) && form.hasError('notSame')">
+                          Las contraseñas no coinciden
+                        </small>
                 </div>
                 <div class="d-grid gap-2 col-4 mx-auto">
                     <button type="button" class="btn btn-sm btn-primary btn-block"
-                        [disabled]="!form.valid">Enviar</button>
+                        [disabled]="!form.valid" (click)="save()">Enviar</button>
                 </div>
             </form>
         </div>

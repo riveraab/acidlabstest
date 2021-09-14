@@ -28,12 +28,18 @@ namespace Acidlabs.Application
         {
             TokenDTO resp = new TokenDTO();
             var user = await _userRepository.GetUserByEmailAsync(credentials.Email.ToLower());
-            if (user == null) throw new Exception("No existe usuario");
+            if (user == null) throw new Exception("Usuario y/o contraseña invalidos");
 
             // validar clave
 
-            resp.access_token = generateToken(user);
-            return resp;
+            var isPasswordValid = VerifyPasswordHash(credentials.Password, Convert.FromBase64String(user.PasswordHash), Convert.FromBase64String(user.PasswordSalt));
+            if (isPasswordValid)
+            {
+                resp.access_token = generateToken(user);
+                return resp;
+            }
+            
+            throw new Exception("Usuario y/o contraseña invalidos");
         }
 
         public async Task<TokenDTO> UserLoginGoogleAsync(GoogleAuthDTO credentials)
@@ -84,5 +90,20 @@ namespace Acidlabs.Application
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
+
+        private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
+        {
+            using (var hmac = new System.Security.Cryptography.HMACSHA512(passwordSalt))
+            {
+                var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+                for (int i = 0; i < computedHash.Length; i++)
+                {
+                    if (computedHash[i] != passwordHash[i]) return false;
+                }
+            }
+            return true;
+        }
+
+
     }
 }

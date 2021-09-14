@@ -14,6 +14,9 @@ export class UserService {
     return this._http.get(`${environment.api_url}user`);
   }
 
+  getUser(id: string) {
+    return this._http.get(`${environment.api_url}user/${id}`);
+  }
   removeUser(id: string) {
     return this._http.delete(`${environment.api_url}user/${id}`);
   }
@@ -23,7 +26,7 @@ export class UserService {
   }
 
   editUser(user: IUser){
-    return this._http.post(`${environment.api_url}user/${user.id}`, user);
+    return this._http.put(`${environment.api_url}user/${user.id}`, user);
   }
 
 }

@@ -4,6 +4,7 @@ using Acidlabs.Core.Repository;
 using Acidlabs.Core.Services;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Acidlabs.Application
@@ -27,11 +28,18 @@ namespace Acidlabs.Application
 
         public async Task<User> SaveUserAsync(UserRegisterDTO user)
         {
+
+            var userByEmail = await _userRepository.GetUserByEmailAsync(user.Email);
+            if (userByEmail != null) throw new Exception($"Usuario con correo {user.Email} ya existe.");
+
+            CreatePasswordHash(user.Password, out byte[] passwordHash, out byte[] passwordSalt);
             var usr = new User
             {
                 Id = Guid.NewGuid().ToString("N"),
-                Name = user.Name,
-                Email = user.Email
+                Name = user.Name.Trim(),
+                Email = user.Email.ToLower().Trim(),
+                PasswordHash = Convert.ToBase64String(passwordHash),
+                PasswordSalt = Convert.ToBase64String(passwordSalt)
             };
 
             return await _userRepository.SaveUserAsync(usr);
@@ -43,7 +51,7 @@ namespace Acidlabs.Application
             var usr = await _userRepository.GetUserByIdAsync(id);
             if (usr == null) throw new Exception("Usuario no existe");
             usr.Name = user.Name;
-            usr.Email = user.Email;
+            usr.Email = user.Email.ToLower().Trim();
             //TODO: Cambiar password y verificar correo utilizado
             return await _userRepository.SaveUserAsync(usr);
         }
@@ -57,6 +65,16 @@ namespace Acidlabs.Application
             await _userRepository.RemoveUserAsync(id);
         }
 
+
+
+        public void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
+        {
+            using (var hmac = new System.Security.Cryptography.HMACSHA512())
+            {
+                passwordSalt = hmac.Key;
+                passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+            }
+        }
 
     }
 }

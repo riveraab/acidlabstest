@@ -40,12 +40,18 @@ namespace Acidlabs.Infrastructure
                 item.TryGetValue("Id", out var userid);
                 item.TryGetValue("Email", out var email);
                 item.TryGetValue("Name", out var name);
+                item.TryGetValue("PasswordSalt", out var passwordSalt);
+                item.TryGetValue("PasswordHash", out var passwordHash);
 
                 user.Id = userid?.S;
                 user.Email = email?.S;
                 user.Name = name?.S;
+                user.PasswordHash = passwordHash?.S;
+                user.PasswordSalt = passwordSalt?.S;
+
+                return user;
             }
-            return user;
+            return null;
         }
 
         public async Task<User> GetUserByEmailAsync(string email)
@@ -69,7 +75,8 @@ namespace Acidlabs.Infrastructure
                     item.TryGetValue("Id", out var id);
                     item.TryGetValue("Email", out var email);
                     item.TryGetValue("Name", out var name);
-                    users.Add(new User { Id = id?.S, Email = email?.S, Name = name?.S });
+
+                    users.Add(new User { Id = id?.S, Email = email?.S, Name = name?.S});
                 }
 
             }
