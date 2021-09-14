@@ -89,9 +89,8 @@ namespace Acidlabs.API
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.UseAuthentication();
             app.UseRouting();
+            app.UseAuthentication();            
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

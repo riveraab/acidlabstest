@@ -7,8 +7,9 @@ import { UserListComponent } from './_components/user-list/user-list.component';
 import { AddUserComponent } from './_components/add-user/add-user.component';
 import { GoogleLoginProvider, SocialAuthServiceConfig, SocialLoginModule } from 'angularx-social-login';
 import { environment } from 'src/environments/environment';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
+import { AuthInterceptor } from './_interceptors/auth.interceptor';
 
 
 @NgModule({
@@ -37,7 +38,8 @@ import { ReactiveFormsModule } from '@angular/forms';
           }
         ]
       } as SocialAuthServiceConfig,
-    }
+    },
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })

@@ -3,6 +3,7 @@ using Acidlabs.Core.DTO;
 using Acidlabs.Core.Repository;
 using Acidlabs.Core.Services;
 using Google.Apis.Auth;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -17,9 +18,11 @@ namespace Acidlabs.Application
     public class AuthService : IAuthService
     {
         private readonly IUserRepository _userRepository;
-        public AuthService(IUserRepository userRepository)
+        private readonly IConfiguration _config;
+        public AuthService(IUserRepository userRepository, IConfiguration config)
         {
             _userRepository = userRepository;
+            _config = config;
         }
         public async Task<TokenDTO> UserLoginAsync(UserLoginDTO credentials)
         {
@@ -37,8 +40,9 @@ namespace Acidlabs.Application
         {
             var resp = new TokenDTO();
             GoogleJsonWebSignature.ValidationSettings settings = new GoogleJsonWebSignature.ValidationSettings();
-            // TODO: parametrizar
-            settings.Audience = new List<string>() { "481634338205-vs2eve94at5qtmk0089ukhkb0msh5bq1.apps.googleusercontent.com" };
+
+            string clientId = _config.GetValue<string>("Google:ClientId");
+            settings.Audience = new List<string>() { clientId };
 
             GoogleJsonWebSignature.Payload payload = GoogleJsonWebSignature.ValidateAsync(credentials.token, settings).Result;
 
@@ -65,8 +69,8 @@ namespace Acidlabs.Application
                 new Claim(JwtRegisteredClaimNames.Email, user.Email)
             };
 
-            //TODO: Cambiar a parametro
-            var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("TestAcidLabs - 1237jfafa890kasñsdl90"));
+            string keyCfg = _config.GetValue<string>("Authentication:Token");
+            var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(keyCfg));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
