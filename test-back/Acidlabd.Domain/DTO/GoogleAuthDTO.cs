@@ -6,5 +6,6 @@ namespace Acidlabs.Core.DTO
 {
     public class GoogleAuthDTO
     {
+        public string token { get; set; }
     }
 }

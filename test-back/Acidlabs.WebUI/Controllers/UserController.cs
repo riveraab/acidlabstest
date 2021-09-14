@@ -21,8 +21,8 @@ namespace Acidlabs.API.Controllers
             _userService = userService;
         }
 
-      
-        [Authorize]
+
+        //[Authorize]
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -39,7 +39,7 @@ namespace Acidlabs.API.Controllers
             }
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(string id)
         {
@@ -59,67 +59,58 @@ namespace Acidlabs.API.Controllers
 
         }
 
-    
+
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] UserRegisterDTO user)
         {
             try
             {
-                await _userService.SaveUserAsync(user);
+                if (!ModelState.IsValid) return BadRequest(ModelState);
+                var created = await _userService.SaveUserAsync(user);
+                return Ok(created);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+
+
+        }
+
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(string id, [FromBody] UserRegisterDTO user)
+        {
+            try
+            {
+                if (!ModelState.IsValid) return BadRequest(ModelState);
+                var created = await _userService.UpdateUserAsync(id, user);
+                return Ok(created);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+        }
+
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            try
+            {
+                await _userService.DeleteUserAsync(id);
+                return Ok();
 
             }
             catch (Exception ex)
             {
                 return StatusCode(500, ex);
             }
-            
-
-        }
-        
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
         }
 
 
-        [HttpPost("signin/google")]
-        public async Task<IActionResult> ExternalLogin([FromBody] GoogleAuthDTO externalAuth)
-        {
-            var payload = await _jwtHandler.VerifyGoogleToken(externalAuth);
-            if (payload == null)
-                return BadRequest("Invalid External Authentication.");
-            var info = new UserLoginInfo(externalAuth.Provider, payload.Subject, externalAuth.Provider);
-            var user = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
-            if (user == null)
-            {
-                user = await _userManager.FindByEmailAsync(payload.Email);
-                if (user == null)
-                {
-                    user = new User { Email = payload.Email, UserName = payload.Email };
-                    await _userManager.CreateAsync(user);
-                    //prepare and send an email for the email confirmation
-                    await _userManager.AddToRoleAsync(user, "Viewer");
-                    await _userManager.AddLoginAsync(user, info);
-                }
-                else
-                {
-                    await _userManager.AddLoginAsync(user, info);
-                }
-            }
-            if (user == null)
-                return BadRequest("Invalid External Authentication.");
-            //check for the Locked out account
-            var token = await _jwtHandler.GenerateToken(user);
-            return Ok(new AuthResponseDto { Token = token, IsAuthSuccessful = true });
-        }
+
 
     }
 }

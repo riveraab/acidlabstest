@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Acidlabs.Application;
 using Acidlabs.Core.Repository;
 using Acidlabs.Core.Services;
 using Acidlabs.Infrastructure;
@@ -10,6 +11,7 @@ using Amazon;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.Runtime;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -36,6 +38,7 @@ namespace test_back
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+                    
 
             // DynamoDB
             IConfigurationSection dynamoDBSection =
@@ -50,7 +53,7 @@ namespace test_back
             services.AddSingleton<IDynamoDBContext, DynamoDBContext>();
 
             // OAuth
-            services.AddAuthentication("OAuth")
+            /*services.AddAuthentication("OAuth")
                 .AddJwtBearer("OAuth", config =>
                 {
                     config.TokenValidationParameters = new TokenValidationParameters()
@@ -60,19 +63,33 @@ namespace test_back
                         ValidateIssuer = false,
                         ValidateAudience = false,
                     };
-                })
-                .AddGoogle(options =>
+                })*/
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    IConfigurationSection googleAuthNSection =
-                        Configuration.GetSection("Google");
-                    options.ClientId = googleAuthNSection["ClientId"];
-                    options.ClientSecret = googleAuthNSection["ClientSecret"];
-                });
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetSection("Authentication:Token").Value)),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                };
+            });
+               
             // Services
             services.AddScoped<IAuthService, AuthService>();
-            services.AddScoped<IUserService, IUserService>();
+            services.AddScoped<IUserService, UserService>();
             // Repositories
             services.AddScoped<IUserRepository, UserRepository>();
+
+            // CORS
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsApi",
+                    builder => builder.WithOrigins("http://localhost:4200")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod());
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
@@ -88,6 +105,7 @@ namespace test_back
             app.UseRouting();
 
             app.UseAuthorization();
+            app.UseCors("CorsApi");
 
             app.UseEndpoints(endpoints =>
             {

@@ -2,9 +2,11 @@
 using Acidlabs.Core.Repository;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
+using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.DynamoDBv2.Model;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Acidlabs.Infrastructure
@@ -19,7 +21,7 @@ namespace Acidlabs.Infrastructure
             _context = context;
         }
 
-        public async Task<User> getUserByIdAsync(string id)
+        public async Task<User> GetUserByIdAsync(string id)
         {
             var user = new User();
             var request = new QueryRequest
@@ -31,10 +33,10 @@ namespace Acidlabs.Infrastructure
             };
 
             var response = await _client.QueryAsync(request);
-
-            foreach (Dictionary<string, AttributeValue> item in response.Items)
+            if (response != null && response.Items != null && response.Count > 0)
             {
-                // Process the result.
+                var item = response.Items[0];
+
                 item.TryGetValue("Id", out var userid);
                 item.TryGetValue("Email", out var email);
                 item.TryGetValue("Name", out var name);
@@ -44,6 +46,15 @@ namespace Acidlabs.Infrastructure
                 user.Name = name?.S;
             }
             return user;
+        }
+
+        public async Task<User> GetUserByEmailAsync(string email)
+        {
+            var scanConditions = new List<ScanCondition>();
+            scanConditions.Add(new ScanCondition("Email", ScanOperator.Equal, email));
+            var users = await _context.ScanAsync<User>(scanConditions, null).GetRemainingAsync();
+
+            return users.FirstOrDefault();
         }
 
         public async Task<List<User>> GetUsersAsync()
@@ -65,11 +76,16 @@ namespace Acidlabs.Infrastructure
             return users;
         }
 
-        public async Task SaveUserAsync(User user)
+        public async Task<User> SaveUserAsync(User user)
         {
-            user.Id = Guid.NewGuid().ToString("N");
             await this._context.SaveAsync(user);
-
+            return user;
         }
+
+        public async Task RemoveUserAsync(string id)
+        {
+            await _context.DeleteAsync<User>(id);
+        }
+
     }
 }

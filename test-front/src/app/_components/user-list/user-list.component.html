@@ -1,0 +1,25 @@
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Email</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let user of users ;let i = index;">
+            <th scope="row">{{ i + 1 }}</th>
+            <td>
+                {{ user.name }}
+            </td>
+            <td>{{ user.email }}</td>
+            <td>
+                <div class="div-btn">
+                <a class="btn btn-sm btn-secondary" [routerLink]="['/user/', user.id]">Editar</a>
+                <button type="button" class="btn btn-sm btn-danger" (click)="deleteUser(user.id, user.name)">Eliminar</button>
+            </div>
+            </td>
+        </tr>
+    </tbody>
+</table>

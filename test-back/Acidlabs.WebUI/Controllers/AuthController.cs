@@ -24,12 +24,10 @@ namespace test_back.Controllers
         {
             try
             {
-                if (ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
+                if (!ModelState.IsValid) return BadRequest(ModelState);
+
                 var tokenObj = await _authService.UserLoginAsync(credentials);
-                if(tokenObj != null)
+                if (tokenObj != null)
                 {
                     return Ok(tokenObj);
                 }
@@ -40,6 +38,20 @@ namespace test_back.Controllers
                 return StatusCode(500, ex);
             }
 
+        }
+
+        [HttpPost("login/google")]
+        public async Task<IActionResult> ExternalLogin([FromBody] GoogleAuthDTO googleSignIn)
+        {
+            try
+            {
+                var tokenObj = await this._authService.UserLoginGoogleAsync(googleSignIn);
+                return Ok(tokenObj);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }           
         }
     }
 }

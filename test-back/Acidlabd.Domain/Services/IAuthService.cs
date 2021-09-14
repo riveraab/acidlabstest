@@ -9,6 +9,6 @@ namespace Acidlabs.Core.Services
     public interface IAuthService
     {
         Task<TokenDTO> UserLoginAsync(UserLoginDTO credentials);
-        Task<bool> VerifyGoogleTokenAsync(GoogleAuthDTO credentials);
+        Task<TokenDTO> UserLoginGoogleAsync(GoogleAuthDTO credentials);
     }
 }
