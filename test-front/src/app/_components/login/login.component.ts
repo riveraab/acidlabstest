@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -20,7 +21,7 @@ export class LoginComponent implements OnInit {
     private router: Router) {
     this.form = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required,Validators.minLength(8)]]
+      password: ['', [Validators.required, Validators.minLength(8)]]
     });
   }
 
@@ -43,10 +44,19 @@ export class LoginComponent implements OnInit {
           (resp: any) => {
             this._authService.processToken(resp.access_token)
             this.router.navigateByUrl('/users');
-          }
+          },
+          (err) => this.handleError(err)
         );
     }
-  } 
+  }
+
+  handleError(error: HttpErrorResponse) {
+    console.log(error);
+    const message = error.error?.Message || ''
+    if (message != '') {
+      window.alert(message);
+    }
+  }
 
 
 }

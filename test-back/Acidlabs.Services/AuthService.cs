@@ -31,7 +31,7 @@ namespace Acidlabs.Application
             if (user == null) throw new Exception("Usuario y/o contraseña invalidos");
 
             // validar clave
-
+            if (string.IsNullOrEmpty(user.PasswordHash)) throw new Exception("Usuario debe ingresar por Google");
             var isPasswordValid = VerifyPasswordHash(credentials.Password, Convert.FromBase64String(user.PasswordHash), Convert.FromBase64String(user.PasswordSalt));
             if (isPasswordValid)
             {
